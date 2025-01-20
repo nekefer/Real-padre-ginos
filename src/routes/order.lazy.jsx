@@ -1,14 +1,19 @@
 import { useState, useEffect, useContext } from "react";
-import Pizza from "./Pizza";
-import Cart from "./Cart";
-import { CartContext } from "./contexts";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import Pizza from "../Pizza";
+import Cart from "../Cart";
+import { CartContext } from "../contexts";
+
+export const Route = createLazyFileRoute("/order")({
+  component: Order,
+});
 
 const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
-export default function Order() {
+function Order() {
   const [pizzaType, setPizzaType] = useState("pepperoni");
   const [pizzaSize, setPizzaSize] = useState("M");
   const [pizzaTypes, setPizzaTypes] = useState([]);
@@ -37,7 +42,6 @@ export default function Order() {
   async function checkout() {
     setLoading(true);
 
-  
     await fetch("/api/order", {
       method: "POST",
       headers: {
@@ -47,8 +51,7 @@ export default function Order() {
         cart,
       }),
     });
-    
-    
+
     setCart([]);
     setLoading(false);
   }
@@ -130,7 +133,7 @@ export default function Order() {
           </div>
         )}
       </form>
-      {loading ? <h2>LOADING …</h2> : <Cart cart={cart}  checkout={checkout}/>}
+      {loading ? <h2>LOADING …</h2> : <Cart cart={cart} checkout={checkout} />}
     </div>
   );
 }
